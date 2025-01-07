@@ -13,7 +13,7 @@
                         <div class="col-lg-6 text-center text-lg-right">
                             <ul class="menu list-inline mb-0">
                                 <li class="list-inline-item">
-                                    <a href="https://intra-ykt.com/intraschool/myschool/login" onclick="CerrarSesion();">
+                                    <a href="https://ae.edu.mx/yktenlinea" onclick="CerrarSesion();">
                                         Cerrar sesión
                                     </a>
                                 </li>
