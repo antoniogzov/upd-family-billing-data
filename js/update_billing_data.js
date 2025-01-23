@@ -42,7 +42,7 @@ function toggleFormFields(isEnabled) {
 
 // Función para actualizar los campos del formulario con datos
 function updateFormFields(data = {}) {
-  console.log(data);
+  //console.log(data);
   document.querySelector("#rfc").value = data.rfc || "";
   document.querySelector("#bussiness_name").value = data.business_name || "";
   document.querySelector("#street").value = data.street || "";
@@ -209,7 +209,7 @@ async function getFamilyBillingData() {
       const result = await response.json();
 
       if (Array.isArray(result) && result.length > 0) {
-        console.log(result);
+        //console.log(result);
 
         if (result[0].url_fiscal_doc != "") {
           document
@@ -322,7 +322,7 @@ async function saveBillingData() {
       }
     }
 
-    console.log(invalidFields); //
+    //console.log(invalidFields); //
     if (invalidFields.length > 0) {
       invalidFields.forEach((field) => {
         field.classList.add("is-invalid"); // Marcar los campos inválidos
@@ -358,7 +358,7 @@ async function saveBillingData() {
         : 0, // Verificación del checkbox
         
     };
-    console.log(billingData);
+    //console.log(billingData);
 
     showLoading("Guardando datos...");
     const data = new FormData();
@@ -378,7 +378,7 @@ async function saveBillingData() {
     if (!response.ok) throw new Error("Error al guardar los datos");
 
     const result = await response.json();
-    console.log(JSON.stringify(result));
+    //console.log(JSON.stringify(result));
     if (result.success) {
       Swal.fire(
         "Éxito",
