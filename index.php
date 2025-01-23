@@ -177,7 +177,7 @@ include 'php/container_start.php';
                         <div class="form-group custom-file-upload">
                             <label for="docConstanciaFiscal" class="form-label">Constancia de situación fiscal (PDF)</label>
                             <div class="file-input-container">
-                                <input type="file" class="form-control-file" id="docConstanciaFiscal">
+                                <input type="file" class="form-control-file" id="docConstanciaFiscal" data-status="0">
                                 <span class="file-label" id="spanFile">Seleccionar archivo...</span>
                             </div>
                         </div>

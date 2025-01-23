@@ -3,6 +3,7 @@ const slctStates = document.querySelector("#slct-state");
 const slctMunicipality = document.querySelector("#slct-municipality");
 const slctCFDIUse = document.querySelector("#cfdi_use");
 const currentAddress = document.getElementById("switchCurrentAddress");
+let urlFiscalDoc = "";
 
 let formFields = document.querySelectorAll(
   "#rfc, #bussiness_name, #street, #between_streets, #ext_num, #int_num, #colony, #slct-municipality, #slct-state, #zip_code, #tax_reg, #cfdi_use, #tax_object"
@@ -168,7 +169,12 @@ async function getFamilyBillingData() {
       const result = await response.json();
 
       if (Array.isArray(result) && result.length > 0) {
-        console.log(result);
+        if (result[0].url_fiscal_doc != "") {
+          document
+            .getElementById("docConstanciaFiscal")
+            .setAttribute("data-status", 1);
+            urlFiscalDoc = result[0].url_fiscal_doc;
+        }
         result[0].current_address == 1
           ? (currentAddress.checked = true)
           : (currentAddress.checked = false);
@@ -204,6 +210,13 @@ async function getFamilyBillingData() {
 
       if (Array.isArray(result) && result.length > 0) {
         console.log(result);
+
+        if (result[0].url_fiscal_doc != "") {
+          document
+            .getElementById("docConstanciaFiscal")
+            .setAttribute("data-status", 1);
+            urlFiscalDoc = result[0].url_fiscal_doc;
+        }
         result[0].current_address == 1
           ? (currentAddress.checked = true)
           : (currentAddress.checked = false);
@@ -296,14 +309,19 @@ async function saveBillingData() {
       }
     });
     const fileInput = document.getElementById("docConstanciaFiscal");
-
+    const statusFile = document
+      .getElementById("docConstanciaFiscal")
+      .getAttribute("data-status");
     // Verificar si el archivo ha sido seleccionado
-    if (!fileInput.files.length) {
-      invalidFields.push(fileInput); // Agregar el campo de archivo a los campos inválidos
-      fileInput.classList.add("is-invalid"); // Marcar el campo de archivo como inválido
-    } else {
-      fileInput.classList.remove("is-invalid"); // Remover clase si el archivo está presente
+    if (statusFile == 0) {
+      if (!fileInput.files.length) {
+        invalidFields.push(fileInput); // Agregar el campo de archivo a los campos inválidos
+        fileInput.classList.add("is-invalid"); // Marcar el campo de archivo como inválido
+      } else {
+        fileInput.classList.remove("is-invalid"); // Remover clase si el archivo está presente
+      }
     }
+
     console.log(invalidFields); //
     if (invalidFields.length > 0) {
       invalidFields.forEach((field) => {
@@ -338,6 +356,7 @@ async function saveBillingData() {
       currentAddress: document.querySelector("#switchCurrentAddress").checked
         ? 1
         : 0, // Verificación del checkbox
+        
     };
     console.log(billingData);
 
@@ -345,6 +364,8 @@ async function saveBillingData() {
     const data = new FormData();
     data.append("func", "saveBillingData");
     data.append("docConstancia", fileInput.files[0]); // Usar el archivo seleccionado
+    data.append("urlFiscalDoc", urlFiscalDoc);
+    
     for (const key in billingData) {
       data.append(key, billingData[key]);
     }

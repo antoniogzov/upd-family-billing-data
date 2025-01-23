@@ -110,6 +110,7 @@ function saveBillingData()
 
         $billing = new BillingData;
         // Verificar si se envió un archivo
+        if (($_POST['urlFiscalDoc'])==''){
         if (isset($_FILES['docConstancia']) && $_FILES['docConstancia']['error'] === UPLOAD_ERR_OK) {
             $file = $_FILES['docConstancia'];
 
@@ -152,7 +153,9 @@ function saveBillingData()
             echo json_encode($response);
             return;
         }
-
+        }else{
+            $data['docConstanciaPath'] = $_POST['urlFiscalDoc'];
+        }
 
         try {
             $result = $billing->saveOrUpdateBillingData($family_code, $data);
