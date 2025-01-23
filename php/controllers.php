@@ -109,6 +109,50 @@ function saveBillingData()
         $data = $_POST;
 
         $billing = new BillingData;
+        // Verificar si se envió un archivo
+        if (isset($_FILES['docConstancia']) && $_FILES['docConstancia']['error'] === UPLOAD_ERR_OK) {
+            $file = $_FILES['docConstancia'];
+
+            // Validar tipo y tamaño del archivo
+            $allowedTypes = ['application/pdf'];
+            if (!in_array($file['type'], $allowedTypes)) {
+                $response["message"] = "El archivo debe ser un PDF.";
+                echo json_encode($response);
+                return;
+            }
+
+            if ($file['size'] > 2 * 1024 * 1024) { // Máximo 2 MB
+                $response["message"] = "El archivo excede el tamaño permitido de 2 MB.";
+                echo json_encode($response);
+                return;
+            }
+
+            // Generar un nombre personalizado para el archivo
+            $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+            $newFileName = $family_code . '_constancia_' . date('Ymd_His') . '.' . $extension;
+
+            // Directorio de carga
+            $uploadDir = dirname(__DIR__, 4) . '/billing/public/uploads/families_docs/' . $family_code . '/constancias_fiscales/'; // Cambia esta ruta según tu estructura
+            if (!file_exists($uploadDir)) {
+                mkdir($uploadDir, 0755, true);
+            }
+            $bd_route = '/billing/public/uploads/families_docs/' . $family_code . '/constancias_fiscales/'. $newFileName;; // Cambia esta ruta según tu estructura
+            // Guardar el archivo con el nombre personalizado
+            $filePath = $uploadDir . $newFileName;
+
+            if (!move_uploaded_file($file['tmp_name'], $filePath)) {
+                $response["message"] = "No se pudo guardar el archivo.";
+                echo json_encode($response);
+                return;
+            }
+            // Agregar la ruta del archivo a los datos
+            $data['docConstanciaPath'] = $bd_route;
+        } else {
+            $response["message"] = "No se recibió un archivo válido.";
+            echo json_encode($response);
+            return;
+        }
+
 
         try {
             $result = $billing->saveOrUpdateBillingData($family_code, $data);

@@ -272,10 +272,17 @@ async function getMunicipalitiesByState() {
   }
 }
 
+document
+  .getElementById("docConstanciaFiscal")
+  .addEventListener("change", function (event) {
+    const fileName = event.target.files[0]?.name || "Seleccionar archivo...";
+    event.target.nextElementSibling.textContent = fileName;
+  });
 // Función para guardar los datos en la base de datos
 async function saveBillingData() {
   formFields = document.querySelectorAll(
-    "#rfc, #bussiness_name, #street, #between_streets, #ext_num, #int_num, #colony, #slct-municipality, #slct-state, #zip_code, #tax_reg, #cfdi_use, #tax_object", "#mail"
+    "#rfc, #bussiness_name, #street, #between_streets, #ext_num, #int_num, #colony, #slct-municipality, #slct-state, #zip_code, #tax_reg, #cfdi_use, #tax_object",
+    "#mail"
   );
   try {
     // Validar que los campos obligatorios estén llenos
@@ -288,15 +295,24 @@ async function saveBillingData() {
         invalidFields.push(field); // Agregar a la lista de campos inválidos
       }
     });
+    const fileInput = document.getElementById("docConstanciaFiscal");
 
+    // Verificar si el archivo ha sido seleccionado
+    if (!fileInput.files.length) {
+      invalidFields.push(fileInput); // Agregar el campo de archivo a los campos inválidos
+      fileInput.classList.add("is-invalid"); // Marcar el campo de archivo como inválido
+    } else {
+      fileInput.classList.remove("is-invalid"); // Remover clase si el archivo está presente
+    }
+    console.log(invalidFields); //
     if (invalidFields.length > 0) {
       invalidFields.forEach((field) => {
-        field.classList.add("is-invalid"); // Marcar el error visualmente
+        field.classList.add("is-invalid"); // Marcar los campos inválidos
       });
 
       Swal.fire(
         "Atención",
-        "Todos los campos obligatorios deben ser llenados antes de continuar.",
+        "Todos los campos obligatorios, incluyendo el archivo de constancia fiscal, deben ser llenados antes de continuar.",
         "warning"
       );
       return;
@@ -328,6 +344,7 @@ async function saveBillingData() {
     showLoading("Guardando datos...");
     const data = new FormData();
     data.append("func", "saveBillingData");
+    data.append("docConstancia", fileInput.files[0]); // Usar el archivo seleccionado
     for (const key in billingData) {
       data.append(key, billingData[key]);
     }
@@ -340,6 +357,7 @@ async function saveBillingData() {
     if (!response.ok) throw new Error("Error al guardar los datos");
 
     const result = await response.json();
+    console.log(JSON.stringify(result));
     if (result.success) {
       Swal.fire(
         "Éxito",
@@ -348,6 +366,7 @@ async function saveBillingData() {
       );
       // Quitar clases de error si se guarda con éxito
       formFields.forEach((field) => field.classList.remove("is-invalid"));
+      fileInput.classList.remove("is-invalid"); // Asegurarse de quitar la clase de error del archivo
     } else {
       Swal.fire(
         "Error",
@@ -362,6 +381,51 @@ async function saveBillingData() {
     /* Swal.close(); */
   }
 }
+
+const fileInputCheck = document.getElementById("docConstanciaFiscal");
+const fileText = document.querySelector("#spanFile");
+
+fileInputCheck.addEventListener("change", function (event) {
+  const file = event.target.files[0];
+
+  // Verificar si un archivo ha sido seleccionado
+  if (file) {
+    const fileExtension = file.name.split(".").pop().toLowerCase();
+
+    // Validar si el archivo tiene extensión PDF
+    if (fileExtension !== "pdf") {
+      Swal.fire(
+        "Error",
+        "Solo se permite cargar archivos en formato PDF.",
+        "error"
+      );
+      fileInputCheck.value = ""; // Limpiar el input
+      fileText.textContent = "Seleccionar archivo...";
+      return;
+    }
+
+    // Verificar el tipo MIME del archivo
+    const fileReader = new FileReader();
+    fileReader.onloadend = function () {
+      const byteArray = new Uint8Array(fileReader.result);
+      const header = byteArray.slice(0, 4);
+      const pdfSignature = [0x25, 0x50, 0x44, 0x46]; // "%PDF" en bytes
+
+      // Verificar si el archivo comienza con el encabezado "%PDF"
+      if (!header.every((val, index) => val === pdfSignature[index])) {
+        Swal.fire(
+          "Error",
+          "Solo se permite cargar archivos en formato PDF.",
+          "error"
+        );
+        fileInputCheck.value = ""; // Limpiar el input
+        fileText.textContent = "Seleccionar archivo...";
+      }
+    };
+
+    fileReader.readAsArrayBuffer(file);
+  }
+});
 
 // Inicialmente desactivar los campos del formulario
 toggleFormFields(false);

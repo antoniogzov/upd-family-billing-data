@@ -174,6 +174,14 @@ include 'php/container_start.php';
                             <input type="email" class="form-control" id="mail" placeholder="correo@ejemplo.com" required>
                         </div>
 
+                        <div class="form-group custom-file-upload">
+                            <label for="docConstanciaFiscal" class="form-label">Constancia de situación fiscal (PDF)</label>
+                            <div class="file-input-container">
+                                <input type="file" class="form-control-file" id="docConstanciaFiscal">
+                                <span class="file-label" id="spanFile">Seleccionar archivo...</span>
+                            </div>
+                        </div>
+
                         <br>
                         <br>
 
@@ -197,6 +205,68 @@ include 'php/container_start.php';
     .is-invalid {
         border-color: #dc3545 !important;
         background-color: #f8d7da !important;
+    }
+
+    .custom-file-upload {
+        position: relative;
+        margin-bottom: 20px;
+    }
+
+    .custom-file-upload .form-label {
+        font-size: 14px;
+        color: #555;
+        font-weight: bold;
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    .custom-file-upload .file-input-container {
+        position: relative;
+        width: 100%;
+    }
+
+    .custom-file-upload input[type="file"] {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        opacity: 0;
+        cursor: pointer;
+        z-index: 2;
+    }
+
+    .custom-file-upload .file-label {
+        display: block;
+        width: 100%;
+        padding: 10px 15px;
+        font-size: 14px;
+        color: #555;
+        background-color: #f8f9fa;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        text-align: left;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .custom-file-upload input[type="file"]:focus+.file-label {
+        border-color: #80bdff;
+        outline: none;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+
+    input[type="file"].is-invalid {
+        border: 1px solid red !important;
+        outline: none;
+    }
+
+    input[type="file"]:focus+.file-label,
+    input[type="file"].is-invalid+.file-label {
+        color: red;
+        font-weight: bold;
+        border-color: #dc3545 !important;
     }
 </style>
 <?php

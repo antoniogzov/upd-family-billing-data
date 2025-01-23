@@ -134,7 +134,8 @@ class BillingData extends DataConn
                     colony = :colony,
                     delegation = :delegation,
                     postal_code = :postal_code,
-                    current_address = :current_address
+                    current_address = :current_address,
+                    url_fiscal_doc = :url_fiscal_doc
                     WHERE id_families_billing_addresses = :id_families_billing_addresses";
 
                 $stmtUpdate = $this->conn->prepare($sqlUpdate);
@@ -156,6 +157,7 @@ class BillingData extends DataConn
                 $stmtUpdate->bindParam(':delegation', $data['municipality'], PDO::PARAM_STR);
                 $stmtUpdate->bindParam(':postal_code', $data['postal_code'], PDO::PARAM_INT);
                 $stmtUpdate->bindParam(':current_address', $current_address, PDO::PARAM_INT);
+                $stmtUpdate->bindParam(':url_fiscal_doc', $data['docConstanciaPath'], PDO::PARAM_INT);
                 $stmtUpdate->bindParam(':id_families_billing_addresses', $existing->id_families_billing_addresses, PDO::PARAM_INT);
                 return $stmtUpdate->execute();
             } else {
