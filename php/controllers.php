@@ -110,6 +110,7 @@ function saveBillingData()
 
         $billing = new BillingData;
         // Verificar si se envió un archivo
+        if ($_POST['idBillingType']!=1) {
         if (($_POST['urlFiscalDoc'])==''){
         if (isset($_FILES['docConstancia']) && $_FILES['docConstancia']['error'] === UPLOAD_ERR_OK) {
             $file = $_FILES['docConstancia'];
@@ -156,7 +157,9 @@ function saveBillingData()
         }else{
             $data['docConstanciaPath'] = $_POST['urlFiscalDoc'];
         }
-
+        }else{
+            $data['docConstanciaPath'] = NULL;
+        }
         try {
             $result = $billing->saveOrUpdateBillingData($family_code, $data);
             if ($result) {

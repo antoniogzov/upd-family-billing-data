@@ -215,7 +215,7 @@ async function getFamilyBillingData() {
         //console.log(result);
 
         if (typeof result[0].url_fiscal_doc === "string" && result[0].url_fiscal_doc.trim() !== "" && result[0].url_fiscal_doc.trim() !== "null") {
-          console.log(result[0].url_fiscal_doc);
+          //console.log(result[0].url_fiscal_doc);
           document
             .getElementById("docConstanciaFiscal")
             .setAttribute("data-status", 1);
