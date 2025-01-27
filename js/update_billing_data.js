@@ -6,7 +6,7 @@ const currentAddress = document.getElementById("switchCurrentAddress");
 let urlFiscalDoc = "";
 
 let formFields = document.querySelectorAll(
-  "#rfc, #bussiness_name, #street, #between_streets, #ext_num, #int_num, #colony, #slct-municipality, #slct-state, #zip_code, #tax_reg, #cfdi_use, #tax_object"
+  "#rfc, #bussiness_name, #street, #between_streets, #ext_num, #int_num, #colony, #slct-municipality, #slct-state, #zip_code, #tax_reg, #cfdi_use, #tax_object, #mail, #docConstanciaFiscal"
 );
 
 slctBillingTypes.addEventListener("change", getFamilyBillingData);
@@ -151,8 +151,11 @@ async function getFamilyBillingData() {
     await getMunicipalitiesByState();
     slctMunicipality.value = "Miguel Hidalgo";
     slctMunicipality.disabled = true;
+    document
+    .getElementById("docConstanciaFiscal")
+    .setAttribute("data-status", 1);
 
-    try {
+/*     try {
       showLoading("Cargando datos de facturación...");
       const data = new FormData();
       data.append("func", "getFamilyBillingData");
@@ -178,19 +181,19 @@ async function getFamilyBillingData() {
         result[0].current_address == 1
           ? (currentAddress.checked = true)
           : (currentAddress.checked = false);
-        updateFormFields(result[0]);
+        //updateFormFields(result[0]);
         slctStates.value = 9;
         await getMunicipalitiesByState();
         slctMunicipality.value = result[0].delegation || "";
         toggleFormFields(false);
       } else {
         toggleFormFields(false);
-        updateFormFields(); // Vaciar campos
+       // updateFormFields(); // Vaciar campos
       }
     } catch (err) {
     } finally {
       Swal.close();
-    }
+    } */
   } else {
     try {
       showLoading("Cargando datos de facturación...");
@@ -211,11 +214,16 @@ async function getFamilyBillingData() {
       if (Array.isArray(result) && result.length > 0) {
         //console.log(result);
 
-        if (result[0].url_fiscal_doc != "") {
+        if (typeof result[0].url_fiscal_doc === "string" && result[0].url_fiscal_doc.trim() !== "" && result[0].url_fiscal_doc.trim() !== "null") {
+          console.log(result[0].url_fiscal_doc);
           document
             .getElementById("docConstanciaFiscal")
             .setAttribute("data-status", 1);
             urlFiscalDoc = result[0].url_fiscal_doc;
+        }else{
+          document
+            .getElementById("docConstanciaFiscal")
+            .setAttribute("data-status", 0);
         }
         result[0].current_address == 1
           ? (currentAddress.checked = true)
