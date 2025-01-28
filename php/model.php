@@ -211,6 +211,44 @@ class BillingData extends DataConn
         }
     }
 
+    public function getAndDeleteURLFiscalDoc($family_code, $data)
+    {
+        $url_doc = "";
+        try {
+            // Obtener el ID de la familia a partir del código
+            $sqlFamily = "SELECT id_family FROM families_ykt.families WHERE family_code = :family_code";
+            $stmtFamily = $this->conn->prepare($sqlFamily);
+            $stmtFamily->bindParam(':family_code', $family_code, PDO::PARAM_STR);
+            $stmtFamily->execute();
+            $family = $stmtFamily->fetch(PDO::FETCH_OBJ);
+
+            if (!$family) {
+                throw new Exception("Código de familia no encontrado.");
+            }
+
+            // Validar si ya existe un registro con los mismos datos
+
+            $sqlCheck = "SELECT url_fiscal_doc FROM families_billing_data.families_billing_addresses WHERE id_families_billing_addresses = :idBillAddress";
+            $stmtURL = $this->conn->prepare($sqlCheck);
+            $stmtURL->bindParam(':idBillAddress', $data['idBillAddress'], PDO::PARAM_INT);
+            $stmtURL->execute();
+            $URL = $stmtURL->fetch(PDO::FETCH_OBJ);
+
+            if ($URL) {
+                $sqlCheck = "UPDATE families_billing_data.families_billing_addresses
+                SET url_fiscal_doc = ''
+                WHERE id_families_billing_addresses = :idBillAddress";
+                $stmtCheck = $this->conn->prepare($sqlCheck);
+                $stmtCheck->bindParam(':idBillAddress', $data['idBillAddress'], PDO::PARAM_INT);
+                $stmtCheck->execute();
+
+                return $URL;
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
 
 
     public function getStates()

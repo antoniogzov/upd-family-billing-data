@@ -3,6 +3,13 @@ const slctStates = document.querySelector("#slct-state");
 const slctMunicipality = document.querySelector("#slct-municipality");
 const slctCFDIUse = document.querySelector("#cfdi_use");
 const currentAddress = document.getElementById("switchCurrentAddress");
+const viewFiscalDocContainer = document.getElementById(
+  "viewFiscalDocContainer"
+);
+const deleteFiscalDoc = document.getElementById("deleteFiscalDoc");
+viewFiscalDocContainer.style.display = "none"; //
+const viewFiscalDoc = document.getElementById("viewFiscalDoc");
+
 let urlFiscalDoc = "";
 
 let formFields = document.querySelectorAll(
@@ -11,6 +18,18 @@ let formFields = document.querySelectorAll(
 
 slctBillingTypes.addEventListener("change", getFamilyBillingData);
 slctStates.addEventListener("change", getMunicipalitiesByState);
+deleteFiscalDoc.addEventListener("click", function (event) {
+  event.preventDefault(); // Previene la actualización de la página
+
+  const idBillAddress = this.getAttribute("id-bill-addrss");
+
+  console.log(idBillAddress);
+  // Llamar a la función de eliminación
+  deleteFiscalDocument(idBillAddress);
+
+  // Ejemplo: llamar a una función para eliminar el documento
+});
+
 document
   .querySelector("#save-billing-data")
   .addEventListener("click", function (event) {
@@ -127,12 +146,13 @@ async function getCurrentBillingType() {
     );
     console.error(err);
   } finally {
-    Swal.close();
+    // Swal.close();
   }
 }
 
 // Función para cargar los datos de facturación
 async function getFamilyBillingData() {
+  viewFiscalDocContainer.style.display = "none"; //
   const idBillingType = slctBillingTypes.value;
 
   if (idBillingType == 1) {
@@ -152,10 +172,10 @@ async function getFamilyBillingData() {
     slctMunicipality.value = "Miguel Hidalgo";
     slctMunicipality.disabled = true;
     document
-    .getElementById("docConstanciaFiscal")
-    .setAttribute("data-status", 1);
+      .getElementById("docConstanciaFiscal")
+      .setAttribute("data-status", 1);
 
-/*     try {
+    /*     try {
       showLoading("Cargando datos de facturación...");
       const data = new FormData();
       data.append("func", "getFamilyBillingData");
@@ -212,18 +232,30 @@ async function getFamilyBillingData() {
       const result = await response.json();
 
       if (Array.isArray(result) && result.length > 0) {
-        //console.log(result);
+        console.log(result);
 
-        if (typeof result[0].url_fiscal_doc === "string" && result[0].url_fiscal_doc.trim() !== "" && result[0].url_fiscal_doc.trim() !== "null") {
-          //console.log(result[0].url_fiscal_doc);
+        if (
+          typeof result[0].url_fiscal_doc === "string" &&
+          result[0].url_fiscal_doc.trim() !== "" &&
+          result[0].url_fiscal_doc.trim() !== "null"
+        ) {
+          console.log(result[0].url_fiscal_doc);
+
+          urlFiscalDoc = result[0].url_fiscal_doc;
+          viewFiscalDocContainer.style.display = "block"; //
+          deleteFiscalDoc.setAttribute(
+            "id-bill-addrss",
+            result[0].id_families_billing_addresses
+          );
+          viewFiscalDoc.href = urlFiscalDoc;
           document
             .getElementById("docConstanciaFiscal")
             .setAttribute("data-status", 1);
-            urlFiscalDoc = result[0].url_fiscal_doc;
-        }else{
+        } else {
           document
             .getElementById("docConstanciaFiscal")
             .setAttribute("data-status", 0);
+          viewFiscalDocContainer.style.display = "none"; //
         }
         result[0].current_address == 1
           ? (currentAddress.checked = true)
@@ -250,6 +282,49 @@ async function getFamilyBillingData() {
   }
 }
 
+async function deleteFiscalDocument(idBillAddress) {
+  try {
+    showLoading("Procesando petición...");
+    const data = new FormData();
+    data.append("func", "deleteFiscalDocument");
+    data.append("idBillAddress", idBillAddress);
+
+    const response = await fetch("php/controllers.php", {
+      method: "POST",
+      body: data,
+    });
+
+    if (!response.ok)
+      throw new Error("Error al obtener los datos de facturación");
+
+    const result = await response.json();
+    console.log(result);
+    if (result.success) {
+      document
+        .getElementById("docConstanciaFiscal")
+        .setAttribute("data-status", 0);
+      viewFiscalDocContainer.style.display = "none"; //
+
+      Swal.fire("Hecho!!", result.message, "success");
+    } else {
+      document
+        .getElementById("docConstanciaFiscal")
+        .setAttribute("data-status", 1);
+      viewFiscalDocContainer.style.display = "block"; //
+
+      Swal.fire("Error", result.message, "error");
+    }
+  } catch (err) {
+    Swal.fire(
+      "Error",
+      "Ocurrió un problema al cargar los datos de facturación.",
+      "error"
+    );
+    console.error(err);
+  } finally {
+    // Swal.close();
+  }
+}
 // Función para cargar los municipios por estado
 async function getMunicipalitiesByState() {
   try {
@@ -364,7 +439,6 @@ async function saveBillingData() {
       currentAddress: document.querySelector("#switchCurrentAddress").checked
         ? 1
         : 0, // Verificación del checkbox
-        
     };
     //console.log(billingData);
 
@@ -373,7 +447,7 @@ async function saveBillingData() {
     data.append("func", "saveBillingData");
     data.append("docConstancia", fileInput.files[0]); // Usar el archivo seleccionado
     data.append("urlFiscalDoc", urlFiscalDoc);
-    
+
     for (const key in billingData) {
       data.append(key, billingData[key]);
     }
@@ -392,7 +466,11 @@ async function saveBillingData() {
         "Éxito",
         "Los datos de facturación se guardaron correctamente.",
         "success"
-      );
+      ).then((result) => {
+        /* Read more about isConfirmed, isDenied below */
+        showLoading("Cargando...");
+        location.reload();
+      });
       // Quitar clases de error si se guarda con éxito
       formFields.forEach((field) => field.classList.remove("is-invalid"));
       fileInput.classList.remove("is-invalid"); // Asegurarse de quitar la clase de error del archivo

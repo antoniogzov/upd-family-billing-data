@@ -181,6 +181,14 @@ include 'php/container_start.php';
                                 <span class="file-label" id="spanFile">Seleccionar archivo...</span>
                             </div>
                         </div>
+                        <div id="viewFiscalDocContainer" style="margin-top: 10px;">
+                            <a href="#" id="viewFiscalDoc" class="btn btn-success" target="_blank">
+                                Ver documento cargado
+                            </a>
+                            <button id="deleteFiscalDoc" class="btn btn-danger" style="margin-left: 10px;">
+                                Eliminar documento
+                            </button>
+                        </div>
 
                         <br>
                         <br>
