@@ -311,6 +311,8 @@ async function deleteFiscalDocument(idBillAddress) {
         .getElementById("docConstanciaFiscal")
         .setAttribute("data-status", 0);
       viewFiscalDocContainer.style.display = "none"; //
+      viewFiscalDoc.href = "";
+      urlFiscalDoc = "";
 
       Swal.fire("Hecho!!", result.message, "success");
     } else {
