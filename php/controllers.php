@@ -203,10 +203,10 @@ function deleteFiscalDocument()
                             echo "Error al intentar eliminar el archivo: " . $filePath;
                         }
                     } else {
-                        echo "El archivo no existe en la ruta especificada: " . $filePath;
+                        //echo "El archivo no existe en la ruta especificada: " . $filePath;
                     }
                 } else {
-                    echo "La URL del documento está vacía o no es válida.";
+                    //echo "La URL del documento está vacía o no es válida.";
                 }
 
                 $response["success"] = true;
