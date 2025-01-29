@@ -23,7 +23,7 @@ deleteFiscalDoc.addEventListener("click", function (event) {
 
   const idBillAddress = this.getAttribute("id-bill-addrss");
 
-  console.log(idBillAddress);
+ // console.log(idBillAddress);
   // Llamar a la función de eliminación
   deleteFiscalDocument(idBillAddress);
 
@@ -232,14 +232,14 @@ async function getFamilyBillingData() {
       const result = await response.json();
 
       if (Array.isArray(result) && result.length > 0) {
-        console.log(result);
+        //console.log(result);
 
         if (
           typeof result[0].url_fiscal_doc === "string" &&
           result[0].url_fiscal_doc.trim() !== "" &&
           result[0].url_fiscal_doc.trim() !== "null"
         ) {
-          console.log(result[0].url_fiscal_doc);
+         // console.log(result[0].url_fiscal_doc);
 
           urlFiscalDoc = result[0].url_fiscal_doc;
           viewFiscalDocContainer.style.display = "block"; //
@@ -298,7 +298,7 @@ async function deleteFiscalDocument(idBillAddress) {
       throw new Error("Error al obtener los datos de facturación");
 
     const result = await response.json();
-    console.log(result);
+    //console.log(result);
     if (result.success) {
       document
         .getElementById("docConstanciaFiscal")
