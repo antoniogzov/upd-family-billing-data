@@ -233,14 +233,15 @@ class BillingData extends DataConn
             $stmtURL->bindParam(':idBillAddress', $data['idBillAddress'], PDO::PARAM_INT);
             $stmtURL->execute();
             $URL = $stmtURL->fetch(PDO::FETCH_OBJ);
+            $sqlCheck = "UPDATE families_billing_data.families_billing_addresses
+            SET url_fiscal_doc = ''
+            WHERE id_families_billing_addresses = :idBillAddress";
+            $stmtCheck = $this->conn->prepare($sqlCheck);
+            $stmtCheck->bindParam(':idBillAddress', $data['idBillAddress'], PDO::PARAM_INT);
+            $stmtCheck->execute();
+
 
             if ($URL) {
-                $sqlCheck = "UPDATE families_billing_data.families_billing_addresses
-                SET url_fiscal_doc = ''
-                WHERE id_families_billing_addresses = :idBillAddress";
-                $stmtCheck = $this->conn->prepare($sqlCheck);
-                $stmtCheck->bindParam(':idBillAddress', $data['idBillAddress'], PDO::PARAM_INT);
-                $stmtCheck->execute();
 
                 return $URL;
             }
