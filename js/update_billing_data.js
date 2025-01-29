@@ -23,7 +23,7 @@ deleteFiscalDoc.addEventListener("click", function (event) {
 
   const idBillAddress = this.getAttribute("id-bill-addrss");
 
- // console.log(idBillAddress);
+  // console.log(idBillAddress);
   // Llamar a la función de eliminación
   deleteFiscalDocument(idBillAddress);
 
@@ -152,6 +152,11 @@ async function getCurrentBillingType() {
 
 // Función para cargar los datos de facturación
 async function getFamilyBillingData() {
+  // Limpiar el input de tipo archivo
+  document.getElementById("docConstanciaFiscal").value = "";
+
+  // Actualizar el texto del span
+  document.getElementById("spanFile").textContent = "Seleccionar archivo...";
   viewFiscalDocContainer.style.display = "none"; //
   const idBillingType = slctBillingTypes.value;
 
@@ -174,6 +179,7 @@ async function getFamilyBillingData() {
     document
       .getElementById("docConstanciaFiscal")
       .setAttribute("data-status", 1);
+    document.getElementById("custom-file-upload").style.display = "none";
 
     /*     try {
       showLoading("Cargando datos de facturación...");
@@ -215,6 +221,7 @@ async function getFamilyBillingData() {
       Swal.close();
     } */
   } else {
+    document.getElementById("custom-file-upload").style.display = "block";
     try {
       showLoading("Cargando datos de facturación...");
       const data = new FormData();
@@ -239,7 +246,7 @@ async function getFamilyBillingData() {
           result[0].url_fiscal_doc.trim() !== "" &&
           result[0].url_fiscal_doc.trim() !== "null"
         ) {
-         // console.log(result[0].url_fiscal_doc);
+          // console.log(result[0].url_fiscal_doc);
 
           urlFiscalDoc = result[0].url_fiscal_doc;
           viewFiscalDocContainer.style.display = "block"; //

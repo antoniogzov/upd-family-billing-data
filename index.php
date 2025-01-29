@@ -174,7 +174,7 @@ include 'php/container_start.php';
                             <input type="email" class="form-control" id="mail" placeholder="correo@ejemplo.com" required>
                         </div>
 
-                        <div class="form-group custom-file-upload">
+                        <div class="form-group custom-file-upload" id="custom-file-upload">
                             <label for="docConstanciaFiscal" class="form-label">Constancia de situación fiscal (PDF)</label>
                             <div class="file-input-container">
                                 <input type="file" class="form-control-file" id="docConstanciaFiscal" data-status="0">
